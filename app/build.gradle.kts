@@ -95,6 +95,12 @@ android {
         }
     }
 
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
+
     flavorDimensions += "app"
 
     productFlavors {
@@ -185,7 +191,6 @@ dependencies {
     val fullImplementation = "fullImplementation"
     val debugImplementation = "debugImplementation"
 
-    implementation(project(":lyricsProviders"))
     // Compose
     val composeBom = platform(libs.compose.bom)
     implementation(composeBom)

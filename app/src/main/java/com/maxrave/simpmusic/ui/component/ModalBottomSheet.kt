@@ -1303,9 +1303,8 @@ fun NowPlayingBottomSheet(
             mutableIntStateOf(
                 when (uiState.mainLyricsProvider) {
                     DataStoreManager.SIMPMUSIC -> 0
-                    DataStoreManager.MUSIXMATCH -> 1
+                    DataStoreManager.LRCLIB -> 1
                     DataStoreManager.YOUTUBE -> 2
-                    DataStoreManager.LRCLIB -> 3
                     else -> 0
                 },
             )
@@ -1358,7 +1357,7 @@ fun NowPlayingBottomSheet(
                             },
                         )
                         Spacer(modifier = Modifier.size(10.dp))
-                        Text(text = stringResource(id = R.string.musixmatch), style = typo.labelSmall)
+                        Text(text = stringResource(id = R.string.lrclib), style = typo.labelSmall)
                     }
                     Row(
                         modifier =
@@ -1379,25 +1378,6 @@ fun NowPlayingBottomSheet(
                         Spacer(modifier = Modifier.size(10.dp))
                         Text(text = stringResource(id = R.string.youtube_transcript), style = typo.labelSmall)
                     }
-                    Row(
-                        modifier =
-                            Modifier
-                                .padding(horizontal = 4.dp)
-                                .fillMaxWidth()
-                                .clickable {
-                                    selected = 3
-                                },
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        RadioButton(
-                            selected = selected == 3,
-                            onClick = {
-                                selected = 3
-                            },
-                        )
-                        Spacer(modifier = Modifier.size(10.dp))
-                        Text(text = stringResource(id = R.string.lrclib), style = typo.labelSmall)
-                    }
                 }
             },
             confirmButton = {
@@ -1407,10 +1387,9 @@ fun NowPlayingBottomSheet(
                             NowPlayingBottomSheetUIEvent.ChangeLyricsProvider(
                                 when (selected) {
                                     0 -> DataStoreManager.SIMPMUSIC
-                                    1 -> DataStoreManager.MUSIXMATCH
+                                    1 -> DataStoreManager.LRCLIB
                                     2 -> DataStoreManager.YOUTUBE
-                                    3 -> DataStoreManager.LRCLIB
-                                    else -> DataStoreManager.MUSIXMATCH
+                                    else -> DataStoreManager.SIMPMUSIC
                                 },
                             ),
                         )
@@ -1980,52 +1959,61 @@ fun AddToPlaylistModalBottomSheet(
                         shape = RoundedCornerShape(50),
                     ) {}
                     Spacer(modifier = Modifier.height(5.dp))
-                    LazyColumn {
-                        items(listLocalPlaylist) { playlist ->
-                            Box(
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 3.dp)
-                                        .clickable(
-                                            enabled = playlist.tracks?.contains(videoId) != true,
-                                            onClick = {
-                                                onClick(playlist)
-                                                hideModalBottomSheet()
-                                            },
-                                        ),
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
+                    if (listLocalPlaylist.isEmpty()) {
+                        Text(
+                            text = stringResource(id = R.string.no_playlist_found),
+                            style = typo.labelSmall,
+                            modifier = Modifier.padding(20.dp),
+                            color = Color.Gray,
+                        )
+                    } else {
+                        LazyColumn {
+                            items(listLocalPlaylist) { playlist ->
+                                Box(
                                     modifier =
                                         Modifier
-                                            .padding(12.dp)
-                                            .align(Alignment.CenterStart),
+                                            .fillMaxWidth()
+                                            .padding(vertical = 3.dp)
+                                            .clickable(
+                                                enabled = playlist.tracks?.contains(videoId) != true,
+                                                onClick = {
+                                                    onClick(playlist)
+                                                    hideModalBottomSheet()
+                                                },
+                                            ),
                                 ) {
-                                    Crossfade(
-                                        targetState = playlist.tracks?.contains(videoId) == true,
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier =
+                                            Modifier
+                                                .padding(12.dp)
+                                                .align(Alignment.CenterStart),
                                     ) {
-                                        if (it) {
-                                            Image(
-                                                painter = painterResource(id = R.drawable.done),
-                                                contentDescription = "",
-                                            )
-                                        } else {
-                                            Image(
-                                                painter =
-                                                    painterResource(
-                                                        id = R.drawable.baseline_playlist_add_24,
-                                                    ),
-                                                contentDescription = "",
-                                            )
+                                        Crossfade(
+                                            targetState = playlist.tracks?.contains(videoId) == true,
+                                        ) {
+                                            if (it) {
+                                                Image(
+                                                    painter = painterResource(id = R.drawable.done),
+                                                    contentDescription = "",
+                                                )
+                                            } else {
+                                                Image(
+                                                    painter =
+                                                        painterResource(
+                                                            id = R.drawable.baseline_playlist_add_24,
+                                                        ),
+                                                    contentDescription = "",
+                                                )
+                                            }
                                         }
+                                        Spacer(modifier = Modifier.width(10.dp))
+                                        Text(
+                                            text = playlist.title,
+                                            style = typo.labelSmall,
+                                            color = if (playlist.tracks?.contains(videoId) == true) Color.Gray else Color.White,
+                                        )
                                     }
-                                    Spacer(modifier = Modifier.width(10.dp))
-                                    Text(
-                                        text = playlist.title,
-                                        style = typo.labelSmall,
-                                        color = if (playlist.tracks?.contains(videoId) == true) Color.Gray else Color.White,
-                                    )
                                 }
                             }
                         }

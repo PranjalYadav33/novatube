@@ -10,10 +10,10 @@ import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -49,6 +49,7 @@ import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.maxrave.simpmusic.R
 import com.maxrave.simpmusic.common.FIRST_TIME_MIGRATION
@@ -82,7 +83,7 @@ import java.util.Locale
 
 @UnstableApi
 @Suppress("DEPRECATION")
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     val viewModel: SharedViewModel by inject()
 
     private val serviceConnection =
@@ -326,6 +327,14 @@ class MainActivity : ComponentActivity() {
                     response.tagName != getString(R.string.version_format, VersionManager.getVersionName())
                 ) {
                     shouldShowUpdateDialog = true
+                }
+            }
+
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            LaunchedEffect(navBackStackEntry) {
+                Log.d("MainActivity", "Current destination: ${navBackStackEntry?.destination?.route}")
+                if (navBackStackEntry?.destination?.route?.contains("FullscreenDestination") == true) {
+                    isShowNowPlaylistScreen = false
                 }
             }
 

@@ -130,6 +130,7 @@ import com.maxrave.simpmusic.R
 import com.maxrave.simpmusic.common.Config.MAIN_PLAYER
 import com.maxrave.simpmusic.extension.GradientAngle
 import com.maxrave.simpmusic.extension.GradientOffset
+import com.maxrave.simpmusic.extension.KeepScreenOn
 import com.maxrave.simpmusic.extension.formatDuration
 import com.maxrave.simpmusic.extension.getColorFromPalette
 import com.maxrave.simpmusic.extension.getScreenSizeInfo
@@ -143,6 +144,7 @@ import com.maxrave.simpmusic.ui.component.HeartCheckBox
 import com.maxrave.simpmusic.ui.component.InfoPlayerBottomSheet
 import com.maxrave.simpmusic.ui.component.LyricsView
 import com.maxrave.simpmusic.ui.component.MediaPlayerView
+import com.maxrave.simpmusic.ui.component.MediaPlayerViewWithSubtitle
 import com.maxrave.simpmusic.ui.component.NowPlayingBottomSheet
 import com.maxrave.simpmusic.ui.component.PlayPauseButton
 import com.maxrave.simpmusic.ui.component.QueueBottomSheet
@@ -463,6 +465,9 @@ fun NowPlayingScreen(
         contentWindowInsets = { WindowInsets(0, 0, 0, 0) },
         shape = RectangleShape,
     ) {
+        if (screenDataState.lyricsData != null && controllerState.isPlaying) {
+            KeepScreenOn()
+        }
         Box {
             if (blurBg && screenDataState.canvasData == null) {
                 AsyncImage(
@@ -785,9 +790,15 @@ fun NowPlayingScreen(
                                         ) {
                                             // Player
                                             Box(Modifier.fillMaxSize()) {
-                                                MediaPlayerView(
+                                                MediaPlayerViewWithSubtitle(
                                                     player = koinInject(named(MAIN_PLAYER)),
                                                     modifier = Modifier.align(Alignment.Center),
+                                                    shouldShowSubtitle = true,
+                                                    shouldPip = false,
+                                                    shouldScaleDownSubtitle = true,
+                                                    timelineState = timelineState,
+                                                    lyricsData = screenDataState.lyricsData?.lyrics,
+                                                    translatedLyricsData = screenDataState.lyricsData?.translatedLyrics,
                                                 )
                                             }
                                             Box(
@@ -1593,7 +1604,6 @@ fun NowPlayingScreen(
                                                 text =
                                                     when (screenDataState.lyricsData?.lyricsProvider) {
                                                         LyricsProvider.SIMPMUSIC -> stringResource(id = R.string.lyrics_provider_simpmusic)
-                                                        LyricsProvider.MUSIXMATCH -> stringResource(id = R.string.lyrics_provider)
                                                         LyricsProvider.LRCLIB -> stringResource(id = R.string.lyrics_provider_lrc)
                                                         LyricsProvider.YOUTUBE -> stringResource(id = R.string.lyrics_provider_youtube)
                                                         LyricsProvider.SPOTIFY -> stringResource(id = R.string.spotify_lyrics_provider)
@@ -1838,7 +1848,7 @@ fun NowPlayingScreen(
                                     )
                                     LazyRow(verticalAlignment = Alignment.CenterVertically) {
                                         item {
-                                            androidx.compose.animation.AnimatedVisibility(visible = screenDataState.isExplicit) {
+                                            AnimatedVisibility(visible = screenDataState.isExplicit) {
                                                 ExplicitBadge(
                                                     modifier =
                                                         Modifier
