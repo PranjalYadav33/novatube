@@ -479,4 +479,3 @@ fun parseWatchPlaylist(data: MusicTwoRowItemRenderer): Map<String, String?> {
     val thumbnails = data.thumbnailRenderer.musicThumbnailRenderer?.thumbnail
     return mapOf("title" to title, "playlistId" to playlistId, "thumbnails" to thumbnails.toString())
 }
-

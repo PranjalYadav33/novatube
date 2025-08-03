@@ -106,7 +106,7 @@ class RecentPagingAdapter(private val context: Context): PagingDataAdapter<Any, 
             else -> throw IllegalArgumentException("Unknown view type")
         }
     }
-    
+
     inner class AlbumEntityViewHolder(val binding: ItemAlbumSearchResultBinding, listener: onItemClickListener): RecyclerView.ViewHolder(binding.root){
         init {
             binding.root.setOnClickListener {

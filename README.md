@@ -1,7 +1,7 @@
 # SimpMusic
 
-<img src="https://raw.githubusercontent.com/maxrave-dev/SimpMusic/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" height="72">  
-A simple music app using YouTube Music for backend  
+<img src="https://raw.githubusercontent.com/maxrave-dev/SimpMusic/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" height="72">
+A simple music app using YouTube Music for backend
 
 [<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" height="80">](https://apt.izzysoft.de/packages/com.maxrave.simpmusic/)  [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="80">](https://f-droid.org/en/packages/com.maxrave.simpmusic/)
 
@@ -36,20 +36,20 @@ A simple music app using YouTube Music for backend
 
 ## Screenshot
 
-<p float="left">  
-  <img src="https://github.com/maxrave-dev/SimpMusic/blob/dev/asset/screenshot/miniplayer_top.jpg" width="200" />  
- <img src="https://github.com/maxrave-dev/SimpMusic/blob/dev/asset/screenshot/miniplayer_bottom.jpg" width="200" />  
- <img src="https://github.com/maxrave-dev/SimpMusic/blob/dev/asset/screenshot/new_home_ui.jpg" width="200" />  
-</p>  
-<p float="left">  
-  <img src="https://github.com/maxrave-dev/SimpMusic/blob/dev/asset/screenshot/moodmoment.jpg" width="200" />  
- <img src="https://github.com/maxrave-dev/SimpMusic/blob/dev/asset/screenshot/artist_top.jpg" width="200" />  
- <img src="https://github.com/maxrave-dev/SimpMusic/blob/dev/asset/screenshot/artist_bottom.jpg" width="200" />  
-</p>  
-<p float="left">  
-  <img src="https://github.com/maxrave-dev/SimpMusic/blob/dev/asset/screenshot/radio.jpg" width="200" />  
- <img src="https://github.com/maxrave-dev/SimpMusic/blob/dev/asset/screenshot/search_suggest.jpg" width="200" />  
- <img src="https://github.com/maxrave-dev/SimpMusic/blob/dev/asset/screenshot/search_result.jpg" width="200" />  
+<p float="left">
+  <img src="https://github.com/maxrave-dev/SimpMusic/blob/dev/asset/screenshot/miniplayer_top.jpg" width="200" />
+ <img src="https://github.com/maxrave-dev/SimpMusic/blob/dev/asset/screenshot/miniplayer_bottom.jpg" width="200" />
+ <img src="https://github.com/maxrave-dev/SimpMusic/blob/dev/asset/screenshot/new_home_ui.jpg" width="200" />
+</p>
+<p float="left">
+  <img src="https://github.com/maxrave-dev/SimpMusic/blob/dev/asset/screenshot/moodmoment.jpg" width="200" />
+ <img src="https://github.com/maxrave-dev/SimpMusic/blob/dev/asset/screenshot/artist_top.jpg" width="200" />
+ <img src="https://github.com/maxrave-dev/SimpMusic/blob/dev/asset/screenshot/artist_bottom.jpg" width="200" />
+</p>
+<p float="left">
+  <img src="https://github.com/maxrave-dev/SimpMusic/blob/dev/asset/screenshot/radio.jpg" width="200" />
+ <img src="https://github.com/maxrave-dev/SimpMusic/blob/dev/asset/screenshot/search_suggest.jpg" width="200" />
+ <img src="https://github.com/maxrave-dev/SimpMusic/blob/dev/asset/screenshot/search_result.jpg" width="200" />
 </p>
 <p float="left">
 <img src="https://github.com/maxrave-dev/SimpMusic/blob/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/15.jpg" width="600"/>
@@ -76,7 +76,7 @@ see [this](https://github.com/maxrave-dev/SimpMusic/blob/13f7ab6e5fa521b62a9fd31
 
 ## Translation
 
-[![Crowdin](https://badges.crowdin.net/simpmusic/localized.svg)](https://crowdin.com/project/simpmusic)  
+[![Crowdin](https://badges.crowdin.net/simpmusic/localized.svg)](https://crowdin.com/project/simpmusic)
 You can help me to translate this app into your language by using
 Crowdin [SimpMusic on Crowdin](https://crowdin.com/project/simpmusic)
 
@@ -95,8 +95,8 @@ app, it's all you need for a music streaming app.
 
 ## Support
 
-Join my Discord server to update the newest features, tips, and report bugs  
-|   [<img src="https://upload.wikimedia.org/wikipedia/vi/7/72/Discord_logo.svg.png" height="40">]() | [Discord](https://discord.gg/Rq5tWVM9Hg) |  
+Join my Discord server to update the newest features, tips, and report bugs
+|   [<img src="https://upload.wikimedia.org/wikipedia/vi/7/72/Discord_logo.svg.png" height="40">]() | [Discord](https://discord.gg/Rq5tWVM9Hg) |
 |---------|---------|
 
 ## Donate

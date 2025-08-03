@@ -327,7 +327,7 @@ class SettingsFragment : Fragment() {
                 findNavController().navigateSafe(R.id.action_global_logInFragment)
             }
         }
-        
+
         binding.btMusixmatchLogin.setOnClickListener {
             if (viewModel.musixmatchLoggedIn.value == DataStoreManager.TRUE) {
                 viewModel.clearMusixmatchCookie()

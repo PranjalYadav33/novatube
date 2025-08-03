@@ -736,4 +736,3 @@ operator fun File.div(child: String): File = File(this, child)
 fun String.toSQLiteQuery(): SimpleSQLiteQuery = SimpleSQLiteQuery(this)
 fun InputStream.zipInputStream(): ZipInputStream = ZipInputStream(this)
 fun OutputStream.zipOutputStream(): ZipOutputStream = ZipOutputStream(this)
-

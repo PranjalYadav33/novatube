@@ -54,7 +54,7 @@ class DownloadedFragment : Fragment() {
 
     private lateinit var downloadedAdapter: SearchItemAdapter
     private lateinit var listDownloaded: ArrayList<Any>
-    
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
