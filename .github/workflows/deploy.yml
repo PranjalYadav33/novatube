@@ -1,0 +1,51 @@
+name: Build Android APK
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    name: Build Android Release APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'SimpMusicRN/package-lock.json'
+
+      - name: Install NPM dependencies
+        working-directory: ./SimpMusicRN
+        run: npm install
+
+      - name: Create empty local.properties
+        working-directory: ./SimpMusicRN/android
+        run: touch local.properties
+
+      - name: Grant execute permission for gradlew
+        working-directory: ./SimpMusicRN/android
+        run: chmod +x ./gradlew
+
+      - name: Build Android Release
+        working-directory: ./SimpMusicRN/android
+        run: ./gradlew assembleRelease
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release
+          path: SimpMusicRN/android/app/build/outputs/apk/release/app-release.apk
