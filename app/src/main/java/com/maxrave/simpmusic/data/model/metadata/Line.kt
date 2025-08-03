@@ -1,15 +1,11 @@
 package com.maxrave.simpmusic.data.model.metadata
 
+import kotlinx.serialization.Serializable
 
-import com.google.gson.annotations.SerializedName
-
+@Serializable
 data class Line(
-    @SerializedName("endTimeMs")
     val endTimeMs: String,
-    @SerializedName("startTimeMs")
     val startTimeMs: String,
-    @SerializedName("syllables")
-    val syllables: List<Any>,
-    @SerializedName("words")
-    val words: String
+    val syllables: List<String>? = null,
+    val words: String,
 )

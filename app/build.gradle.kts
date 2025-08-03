@@ -1,183 +1,350 @@
+import com.android.build.gradle.internal.tasks.CompileArtProfileTask
+import java.util.Properties
+
+val isFullBuild: Boolean by rootProject.extra
 plugins {
-    id ("com.android.application")
-    id ("org.jetbrains.kotlin.android")
-    id ("androidx.navigation.safeargs")
-    id ("com.google.dagger.hilt.android")
-    id("com.google.devtools.ksp")
-    id ("com.mikepenz.aboutlibraries.plugin")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.navigation.safeargs)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.aboutlibraries)
+    alias(libs.plugins.room)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.sentry.gradle)
+}
+
+kotlin {
+    jvmToolchain(17) // or appropriate version
+    compilerOptions {
+        freeCompilerArgs.add("-Xwhen-guards")
+        freeCompilerArgs.add("-Xcontext-receivers")
+    }
 }
 
 android {
+    val abis = arrayOf("armeabi-v7a", "arm64-v8a", "x86_64")
+
     namespace = "com.maxrave.simpmusic"
-    compileSdk = 34
+    compileSdk = 36
+
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
 
     defaultConfig {
         applicationId = "com.maxrave.simpmusic"
         minSdk = 26
-        targetSdk = 34
-        versionCode = 14
-        versionName = "0.1.7"
+        targetSdk = 36
+        versionCode =
+            libs.versions.version.code
+                .get()
+                .toInt()
+        versionName =
+            libs.versions.version.name
+                .get()
+        vectorDrawables.useSupportLibrary = true
 
-        ksp {
-            arg("room.schemaLocation", "$projectDir/schemas")
+        @Suppress("UnstableApiUsage")
+        androidResources {
+            localeFilters +=
+                listOf(
+                    "en",
+                    "vi",
+                    "it",
+                    "de",
+                    "ru",
+                    "tr",
+                    "fi",
+                    "pl",
+                    "pt",
+                    "fr",
+                    "es",
+                    "zh",
+                    "in",
+                    "ar",
+                    "ja",
+                    "b+zh+Hant+TW",
+                    "uk",
+                    "iw",
+                    "az",
+                    "hi",
+                    "th",
+                    "nl",
+                    "ko",
+                    "ca",
+                    "fa",
+                    "bg",
+                )
         }
-
-        resourceConfigurations += listOf(
-            "en",
-            "vi",
-            "it",
-            "de",
-            "ru",
-            "tr",
-            "fi",
-            "pl",
-            "pt",
-            "fr",
-            "es",
-            "zh",
-            "in"
-        )
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
+        if (isFullBuild) {
+            try {
+                println("Full build detected, enabling Sentry DSN")
+                val properties = Properties()
+                properties.load(rootProject.file("local.properties").inputStream())
+                buildConfigField(
+                    "String",
+                    "SENTRY_DSN",
+                    "\"${properties.getProperty("SENTRY_DSN") ?: ""}\"",
+                )
+            } catch (e: Exception) {
+                println("Failed to load SENTRY_DSN from local.properties: ${e.message}")
+            }
+        }
+    }
+
+    flavorDimensions += "app"
+
+    productFlavors {
+        create("foss") {
+            dimension = "app"
+        }
+        create("full") {
+            dimension = "app"
+        }
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
+            splits {
+                abi {
+                    isEnable = true
+                    reset()
+                    isUniversalApk = true
+                    include(*abis)
+                }
+            }
         }
         debug {
+            isMinifyEnabled = false
             applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        isCoreLibraryDesugaringEnabled = true
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
-    }
-    //enable view binding
+    // enable view binding
     buildFeatures {
         viewBinding = true
+        compose = true
+        buildConfig = true
     }
     packaging {
         jniLibs.useLegacyPackaging = true
-        jniLibs.excludes += listOf("META-INF/META-INF/DEPENDENCIES", "META-INF/LICENSE", "META-INF/LICENSE.txt", "META-INF/license.txt", "META-INF/NOTICE", "META-INF/NOTICE.txt", "META-INF/notice.txt", "META-INF/ASL2.0", "META-INF/asm-license.txt", "META-INF/notice.txt", "META-INF/NOTICE.txt", "META-INF/LICENSE.txt", "META-INF/license.txt", "META-INF/notice.txt", "META-INF/NOTICE", "META-INF/LICENSE", "META-INF/notice", "META-INF/notice.txt", "META-INF/NOTICE.txt", "META-INF/LICENSE.txt", "META-INF/license.txt", "META-INF/notice.txt", "META-INF/NOTICE", "META-INF/LICENSE", "META-INF/notice", "META-INF/notice.txt", "META-INF/NOTICE.txt", "META-INF/LICENSE.txt", "META-INF/license.txt", "META-INF/notice.txt", "META-INF/NOTICE", "META-INF/LICENSE", "META-INF/notice", "META-INF/notice.txt", "META-INF/NOTICE.txt", "META-INF/LICENSE.txt", "META-INF/license.txt", "META-INF/notice.txt", "META-INF/NOTICE", "META-INF/LICENSE", "META-INF/notice", "META-INF/notice.txt", "META-INF/NOTICE.txt", "META-INF/LICENSE.txt", "META-INF/license.txt", "META-INF/notice.txt", "META-INF/NOTICE", "META-INF/LICENSE", "META-INF/notice", "META-INF/notice.txt", "META-INF/NOTICE.txt", "META-INF/LICENSE.txt", "META-INF/license.txt", "META-INF/notice.txt", "META-INF/NOTICE", "META-INF/LICENSE", "META-INF/notice", "META-INF/notice.txt", "META-INF/NOTICE.txt", "META-INF/LICENSE.txt", "META-INF/license.txt", "META-INF/notice.txt", "META-INF/NOTICE", "META-INF/LICENSE", "META-INF/notice", "META-INF/notice.txt", "META-INF/NOTICE.txt", "META-INF/LICENSE.txt", "META-INF/license.txt", "META-INF/notice.txt", "META-INF/NOTICE", "META-INF/LICENSE", "META-INF/notice", "META-INF/notice.txt", "META-INF/NOTICE.txt", "META-INF/LICENSE.txt", "META-INF/license.txt", "META-INF/notice", "META-INF/ASL2.0", "META-INF/*.kotlin_module")
+        jniLibs.excludes +=
+            listOf(
+                "META-INF/META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/license.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/ASL2.0",
+                "META-INF/asm-license.txt",
+                "META-INF/notice",
+                "META-INF/*.kotlin_module",
+            )
     }
 }
 
-dependencies {
-
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    //material design3
-    implementation("com.google.android.material:material:1.11.0")
-    //runtime
-    implementation("androidx.startup:startup-runtime:1.1.1")
-    implementation(project(mapOf("path" to ":kotlinYtmusicScraper")))
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
-
-    //ExoPlayer
-    val media3_version = "1.2.0"
-
-    implementation("androidx.media3:media3-exoplayer:$media3_version")
-    implementation("androidx.media3:media3-ui:$media3_version")
-    implementation("androidx.media3:media3-session:$media3_version")
-    implementation("androidx.media3:media3-exoplayer-dash:$media3_version")
-    implementation("androidx.media3:media3-exoplayer-hls:$media3_version")
-    implementation("androidx.media3:media3-exoplayer-rtsp:$media3_version")
-    implementation("androidx.media3:media3-exoplayer-smoothstreaming:$media3_version")
-    implementation("androidx.media3:media3-exoplayer-workmanager:$media3_version")
-    implementation("androidx.media3:media3-datasource-okhttp:$media3_version")
-
-    //palette color
-    implementation("androidx.palette:palette-ktx:1.0.0")
-    //expandable text view
-    implementation("com.github.giangpham96:expandable-text:2.0.0")
-
-
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    ksp("androidx.room:room-compiler:2.6.1")
-    //Legacy Support
-    implementation("androidx.legacy:legacy-support-v4:1.0.0")
-    //Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-guava:1.7.3")
-    //Navigation
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
-
-    implementation("com.google.code.gson:gson:2.10.1")
-
-    //Coil
-    implementation("io.coil-kt:coil:2.4.0")
-    //Glide
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    //Easy Permissions
-    implementation("pub.devrel:easypermissions:3.0.0")
-    //Palette Color
-    implementation("androidx.palette:palette-ktx:1.0.0")
-
-    //Preference
-    implementation("androidx.preference:preference-ktx:1.2.1")
-
-    //fragment ktx
-    implementation("androidx.fragment:fragment-ktx:1.6.2")
-    //Hilt
-    implementation("com.google.dagger:hilt-android:2.48.1")
-    ksp("com.google.dagger:hilt-compiler:2.48.1")
-    ksp("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.7.0")
-    //DataStore
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
-    //Swipe To Refresh
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
-    //Insetter
-    implementation("dev.chrisbanes.insetter:insetter:0.6.1")
-    implementation("dev.chrisbanes.insetter:insetter-dbx:0.6.1")
-
-    //Shimmer
-    implementation("com.facebook.shimmer:shimmer:0.5.0")
-
-    //Lottie
-    val lottieVersion = "6.1.0"
-    implementation("com.airbnb.android:lottie:$lottieVersion")
-
-    //Paging 3
-    val paging_version= "3.2.1"
-    implementation("androidx.paging:paging-runtime-ktx:$paging_version")
-
-    implementation("com.daimajia.swipelayout:library:1.2.0@aar")
-
-
-    //Custom Activity On Crash
-    implementation ("cat.ereza:customactivityoncrash:2.4.0")
-
-    implementation("com.intuit.sdp:sdp-android:1.1.0")
-    implementation("com.intuit.ssp:ssp-android:1.1.0")
-
-    val latestAboutLibsRelease = "10.9.2"
-    implementation ("com.mikepenz:aboutlibraries:${latestAboutLibsRelease}")
-
-    implementation("com.google.android.flexbox:flexbox:3.0.0")
-
+sentry {
+    org.set("simpmusic")
+    projectName.set("android")
+    ignoredFlavors.set(setOf("foss"))
+    ignoredBuildTypes.set(setOf("debug"))
+    autoInstallation.enabled = false
+    val token =
+        try {
+            println("Full build detected, enabling Sentry Auth Token")
+            val properties = Properties()
+            properties.load(rootProject.file("local.properties").inputStream())
+            properties.getProperty("SENTRY_AUTH_TOKEN")
+        } catch (e: Exception) {
+            println("Failed to load SENTRY_AUTH_TOKEN from local.properties: ${e.message}")
+            null
+        }
+    authToken.set(token ?: "")
+    includeProguardMapping.set(true)
+    autoUploadProguardMapping.set(true)
+    telemetry.set(false)
 }
-hilt {
-    enableAggregatingTask = true
+
+dependencies {
+    val fullImplementation = "fullImplementation"
+    val debugImplementation = "debugImplementation"
+
+    implementation(project(":lyricsProviders"))
+    // Compose
+    val composeBom = platform(libs.compose.bom)
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
+    implementation(libs.compose.material3.lib)
+    implementation(libs.compose.material3.sizeclass)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.material.ripple)
+    implementation(libs.compose.material.icons.core)
+    implementation(libs.compose.material.icons.extended)
+    implementation(libs.compose.ui.viewbinding)
+    implementation(libs.constraintlayout.compose)
+
+    // Android Studio Preview support
+    implementation(libs.ui.tooling.preview)
+    implementation(libs.activity.compose)
+    // Optional - Integration with ViewModels
+    implementation(libs.lifecycle.viewmodel.compose)
+
+    implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.core.ktx)
+    implementation(libs.appcompat)
+
+    implementation(libs.work.runtime.ktx)
+    androidTestImplementation(libs.work.testing)
+
+    // Material Design 3
+    implementation(libs.material)
+    // Runtime
+    implementation(libs.startup.runtime)
+    // Other module
+    implementation(project(mapOf("path" to ":kotlinYtmusicScraper")))
+    implementation(project(mapOf("path" to ":spotify")))
+    implementation(project(mapOf("path" to ":aiService")))
+    implementation(project(mapOf("path" to ":sharedutils")))
+    implementation(project(mapOf("path" to ":lyricsService")))
+
+    implementation(libs.lifecycle.livedata.ktx)
+    implementation(libs.lifecycle.viewmodel.ktx)
+    debugImplementation(libs.ui.tooling)
+
+    // ExoPlayer
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.ui)
+    implementation(libs.media3.compose)
+    implementation(libs.media3.session)
+    implementation(libs.media3.exoplayer.dash)
+    implementation(libs.media3.exoplayer.hls)
+    implementation(libs.media3.exoplayer.rtsp)
+    implementation(libs.media3.exoplayer.smoothstreaming)
+    implementation(libs.media3.exoplayer.workmanager)
+    implementation(libs.media3.datasource.okhttp)
+    implementation(libs.okhttp3.logging.interceptor)
+
+    // Palette Color
+    implementation(libs.palette.ktx)
+    // Expandable Text View
+    implementation(libs.expandable.text)
+
+    implementation(libs.constraintlayout)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.espresso.core)
+
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
+    // Legacy Support
+    implementation(libs.legacy.support.v4)
+    // Coroutines
+    implementation(libs.coroutines.android)
+    implementation(libs.coroutines.guava)
+    // Navigation
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
+
+    // Navigation Compose
+    implementation(libs.navigation.compose)
+
+    // Kotlin Serialization
+    implementation(libs.kotlinx.serialization.json)
+
+    // Coil
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
+    implementation(libs.kmpalette.core)
+    // Easy Permissions
+    implementation(libs.easypermissions)
+    // Palette Color
+    implementation(libs.palette.ktx)
+
+    // Preference
+    implementation(libs.preference.ktx)
+
+    // Fragment KTX
+    implementation(libs.fragment.ktx)
+    ksp(libs.kotlinx.metadata.jvm)
+    // DataStore
+    implementation(libs.datastore.preferences)
+    // Swipe To Refresh
+    implementation(libs.swiperefreshlayout)
+    // Insetter
+    implementation(libs.insetter)
+    implementation(libs.insetter.dbx)
+
+    // Lottie
+    implementation(libs.lottie)
+    implementation(libs.lottie.compose)
+
+    // Paging 3
+    implementation(libs.paging.runtime.ktx)
+    implementation(libs.paging.compose)
+
+    // Custom Activity On Crash
+    implementation(libs.customactivityoncrash)
+
+    implementation(libs.sdp.android)
+    implementation(libs.ssp.android)
+
+    implementation(libs.aboutlibraries)
+    implementation(libs.aboutlibraries.compose.m3)
+
+    implementation(libs.flexbox)
+    implementation(libs.balloon)
+
+    // InsetsX
+    implementation(libs.insetsx)
+
+    coreLibraryDesugaring(libs.desugaring)
+
+    // Koin
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+
+    // Store5
+    implementation(libs.store)
+
+    // Jetbrains Markdown
+    api(libs.markdown)
+
+    // Blur Haze
+    implementation(libs.haze)
+    implementation(libs.haze.material)
+
+    fullImplementation(libs.sentry.android)
+
+//    debugImplementation(libs.leak.canary)
 }
 aboutLibraries {
-    prettyPrint = true
-    registerAndroidTasks = false
-    excludeFields = arrayOf("generated")
+    export {
+        prettyPrint = true
+        excludeFields = listOf("generated")
+    }
+    android {
+        registerAndroidTasks = false
+    }
+}
+tasks.withType<CompileArtProfileTask> {
+    enabled = false
 }

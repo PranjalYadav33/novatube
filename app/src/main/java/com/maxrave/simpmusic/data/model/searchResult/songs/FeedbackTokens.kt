@@ -1,11 +1,9 @@
 package com.maxrave.simpmusic.data.model.searchResult.songs
 
+import kotlinx.serialization.Serializable
 
-import com.google.gson.annotations.SerializedName
-
+@Serializable
 data class FeedbackTokens(
-    @SerializedName("add")
-    val add: Any,
-    @SerializedName("remove")
-    val remove: Any
+    val add: String?,
+    val remove: String?,
 )

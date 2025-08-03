@@ -1,13 +1,10 @@
 package com.maxrave.simpmusic.data.model.searchResult.songs
 
+import kotlinx.serialization.Serializable
 
-import com.google.gson.annotations.SerializedName
-
+@Serializable
 data class Thumbnail(
-    @SerializedName("height")
     val height: Int,
-    @SerializedName("url")
     val url: String,
-    @SerializedName("width")
-    val width: Int
+    val width: Int,
 )

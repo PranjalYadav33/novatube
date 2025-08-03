@@ -1,11 +1,9 @@
 package com.maxrave.simpmusic.data.model.searchResult.songs
 
+import kotlinx.serialization.Serializable
 
-import com.google.gson.annotations.SerializedName
-
+@Serializable
 data class Album(
-    @SerializedName("id")
     val id: String,
-    @SerializedName("name")
-    val name: String
+    val name: String,
 )
